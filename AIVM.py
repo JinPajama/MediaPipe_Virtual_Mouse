@@ -7,7 +7,7 @@ import sys
 from ctypes import cast, POINTER
 from comtypes import CLSCTX_ALL
 from pycaw.pycaw import AudioUtilities, IAudioEndpointVolume
-
+#git 시도
 cap = cv2.VideoCapture(0)                           #비디오 캡쳐
 cap.set(cv2.CAP_PROP_FRAME_WIDTH, 640)              
 cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
