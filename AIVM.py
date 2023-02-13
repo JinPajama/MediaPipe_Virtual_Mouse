@@ -12,7 +12,7 @@ cap = cv2.VideoCapture(0)                           #비디오 캡쳐
 cap.set(cv2.CAP_PROP_FRAME_WIDTH, 640)              
 cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
 cap.set(cv2.CAP_PROP_FPS, 60)
-
+#sdf
 initHand = mediapipe.solutions.hands  # Initializing mediapipe
 # Object of mediapipe with "arguments for the hands module" 미디어파이프 내부 핸즈 모듈 
 mainHand = initHand.Hands(min_detection_confidence=0.8, min_tracking_confidence=0.8) # 80% 이상의 정확도일 경우에만 탐지 및 추적
