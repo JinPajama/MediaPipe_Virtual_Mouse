@@ -116,7 +116,6 @@ while True:                 # 영상 처리 시작
             Controll.flag = True
             autopy.mouse.move(wScr-cX, cY)  # x축 값은 카메라 기준 좌우반전, y축은 반전 필요 x
             pX, pY = cX, cY  # pre 값에 current 값 넣어주기
-            print(wScr-cX, cY)
             
         if finger == [0,1,1,1,1] and Controll.flag:  # Checks to see if the pointer finger is down and thumb finger is up
             pyautogui.click()  # Left click
