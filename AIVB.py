@@ -52,6 +52,9 @@ draw = mp.solutions.drawing_utils
 tools = cv2.imread("photo/tools.png")
 tools = tools.astype('uint8')
 
+imgCanvas = np.zeros((height, width, 3), np.uint8)
+imgCanvas.fill(255)
+
 mask = np.ones((height,width))*255
 mask = mask.astype('uint8')
 
@@ -150,8 +153,8 @@ while True:
             time.sleep(0.05)
             
         if j > 15 :
-            cv2.destroyAllWindows()
             cap.release()
+            cv2.destroyAllWindows()
             sys.exit(0)
             
     if op.multi_hand_landmarks:
@@ -184,6 +187,7 @@ while True:
 
                 if index_raised(yi, y9):
                     cv2.line(mask, (prevx, prevy), (x, y), 0 , thick)
+                    #cv2.line(imgCanvas, (prevx, prevy), (x, y), drawColor, brushThickness)
                     prevx, prevy = x, y
 
                 else: 
@@ -256,6 +260,7 @@ while True:
     cv2.putText(frm, curr_tool,(270 + ml, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0,0,255), 2)
     cv2.putText(frm, thickness,(450 + ml, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0,0,255), 2)
     cv2.imshow("AIVB", frm)
+    cv2.imshow("Canvas", imgCanvas)
 
     if cv2.waitKey(1) == 27: 
         cv2.destroyAllWindows()

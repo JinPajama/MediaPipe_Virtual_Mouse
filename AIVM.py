@@ -8,7 +8,6 @@ from ctypes import cast, POINTER
 from comtypes import CLSCTX_ALL
 from pycaw.pycaw import AudioUtilities, IAudioEndpointVolume
 
-
 cap = cv2.VideoCapture(0)                           #비디오 캡쳐
 cap.set(cv2.CAP_PROP_FRAME_WIDTH, 640)              
 cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
@@ -182,6 +181,7 @@ while True:     # 영상 처리 시작
 
 
     img = cv2.flip(img, 1)            #인간이 보기 편한 거울 화면으로 출력
-    cv2.imshow("AIVM", img)         #웹캠 출력
+    #cv2.imshow("AIVM", img)         #웹캠 출력
+
     if cv2.waitKey(1) & 0xFF == 27:   #Esc 누르면 종료
         break
