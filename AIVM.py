@@ -1,6 +1,6 @@
 import cv2
 import time
-import mediapipe
+import mediapipe as mp
 import math, numpy as np
 import autopy ,pyautogui
 import sys
@@ -8,15 +8,16 @@ from ctypes import cast, POINTER
 from comtypes import CLSCTX_ALL
 from pycaw.pycaw import AudioUtilities, IAudioEndpointVolume
 
+
 cap = cv2.VideoCapture(0)                           #비디오 캡쳐
 cap.set(cv2.CAP_PROP_FRAME_WIDTH, 640)              
 cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
 cap.set(cv2.CAP_PROP_FPS, 60)
 
-initHand = mediapipe.solutions.hands  # Initializing mediapipe
+initHand = mp.solutions.hands  # Initializing mediapipe
 # Object of mediapipe with "arguments for the hands module" 미디어파이프 내부 핸즈 모듈 
 mainHand = initHand.Hands(min_detection_confidence=0.8, min_tracking_confidence=0.8) # 80% 이상의 정확도일 경우에만 탐지 및 추적
-draw = mediapipe.solutions.drawing_utils  # 각 핑거 인덱스 간의 연결을 그릴 개체 (랜드마크 사이 선)
+draw = mp.solutions.drawing_utils  # 각 핑거 인덱스 간의 연결을 그릴 개체 (랜드마크 사이 선)
 wScr, hScr = autopy.screen.size()  # 화면의 높이와 너비를 출력 (1920 x 1080)
 scale_factor_x = wScr / 640
 scale_factor_y = hScr / 480
@@ -94,7 +95,12 @@ class Controll:
     flag = False
     grabflag = False
     
-while True:                 # 영상 처리 시작
+while True:     # 영상 처리 시작
+    proc = None
+    if proc:
+        proc.terminate()
+        proc = None        
+
     check, img = cap.read()  # Reads frames from the camera
     imgRGB = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)  # BGR to RGB 변환
     lmList = handLandmarks(imgRGB)
@@ -170,10 +176,12 @@ while True:                 # 영상 처리 시작
             time.sleep(0.05)
             
         if i > 15 :
-            sys.exit(0) 
+            cv2.destroyAllWindows()
+            cap.release()
+            sys.exit(0)
 
 
     img = cv2.flip(img, 1)            #인간이 보기 편한 거울 화면으로 출력
-    cv2.imshow("Webcam", img)         #웹캠 출력
+    cv2.imshow("AIVM", img)         #웹캠 출력
     if cv2.waitKey(1) & 0xFF == 27:   #Esc 누르면 종료
         break
