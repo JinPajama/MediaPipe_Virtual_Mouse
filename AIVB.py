@@ -141,17 +141,17 @@ while True:
         if finger == [1,0,0,0,1]:
             z = 0
             k = 1
-            code = (255,0,0)
+            code = (0,0,255)
         
         if finger == [0,1,0,0,1]:
             z = 1
             k = 2
-            code = (0,255,0)
+            code = (255,0,0)
 
         if finger == [0,0,0,1,1]:
             z = 2
             k = 0
-            code = (0,0,255)
+            code = (0,255,0)
         
         if finger == [0,0,0,0,1]:
             j += 1
