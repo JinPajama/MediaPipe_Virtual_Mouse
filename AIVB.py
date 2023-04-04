@@ -20,6 +20,7 @@ thickness = ""
 width = 640
 height = 480
 i = 0
+code = (255,0,0)
 
 hmin = 13
 hmax = 128
@@ -140,16 +141,18 @@ while True:
         if finger == [1,0,0,0,1]:
             z = 0
             k = 1
+            code = (255,0,0)
         
         if finger == [0,1,0,0,1]:
             z = 1
             k = 2
+            code = (0,255,0)
 
         if finger == [0,0,0,1,1]:
             z = 2
             k = 0
+            code = (0,0,255)
         
-            
         if finger == [0,0,0,0,1]:
             j += 1
             time.sleep(0.05)
@@ -189,7 +192,7 @@ while True:
 
                 if index_raised(yi, y9):
                     cv2.line(mask, (prevx, prevy), (x, y), 0 , thick)
-                    cv2.line(imgCanvas, (prevx, prevy), (x, y), (255,0,0), thick)
+                    cv2.line(imgCanvas, (prevx, prevy), (x, y), code, thick)
                     prevx, prevy = x, y
 
                 else: 
@@ -210,7 +213,7 @@ while True:
                 else:
                     if var_inits:
                         cv2.line(mask, (xii, yii), (x, y), 0 , thick)
-                        cv2.line(imgCanvas, (xii, yii), (x, y), (255,0,0), thick)
+                        cv2.line(imgCanvas, (xii, yii), (x, y), code, thick)
                         var_inits = False
 
             elif curr_tool == "rectangle":      #직사각형
@@ -227,7 +230,7 @@ while True:
                 else:
                     if var_inits:
                         cv2.rectangle(mask, (xii, yii), (x, y), 0 , thick)
-                        cv2.rectangle(imgCanvas, (xii, yii), (x, y), (255, 0, 0), thick)
+                        cv2.rectangle(imgCanvas, (xii, yii), (x, y), code, thick)
                         var_inits = False
 
             elif curr_tool == "circle":         # 원
@@ -244,7 +247,7 @@ while True:
                 else:
                     if var_inits:
                         cv2.circle(mask, (xii, yii), int(((xii-x)**2 + (yii-y)**2)**0.5), 0 , thick)
-                        cv2.circle(imgCanvas, (xii, yii), int(((xii-x)**2 + (yii-y)**2)**0.5), (255, 0, 0), thick)
+                        cv2.circle(imgCanvas, (xii, yii), int(((xii-x)**2 + (yii-y)**2)**0.5), code, thick)
                         var_inits = False
 
             elif curr_tool == "erase":          # 지우개 
