@@ -7,6 +7,7 @@ import sys
 from ctypes import cast, POINTER
 from comtypes import CLSCTX_ALL
 from pycaw.pycaw import AudioUtilities, IAudioEndpointVolume
+import os
 
 cap = cv2.VideoCapture(0)                           #비디오 캡쳐
 cap.set(cv2.CAP_PROP_FRAME_WIDTH, 640)              
@@ -95,10 +96,8 @@ class Controll:
     grabflag = False
     
 while True:     # 영상 처리 시작
-    proc = None
-    if proc:
-        proc.terminate()
-        proc = None        
+    if os.path.exists("stop.txt"):
+        break
 
     check, img = cap.read()  # Reads frames from the camera
     imgRGB = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)  # BGR to RGB 변환
@@ -158,15 +157,7 @@ while True:     # 영상 처리 시작
         if finger == [1,1,0,0,0]:
             length = math.hypot(x1 - x2, y1 - y2)
             vol = np.interp(length, [hmin, hmax], [minVol, maxVol])
-            volN = int(vol)
-            if volN % 4 != 0:
-                volN = volN - volN % 4
-                if volN >= 0:
-                    volN = 0
-                elif volN <= -64:
-                    volN = -64
-                elif volN >= -11:
-                    volN = vol
+            
             volume.SetMasterVolumeLevel(vol, None) 
         
         # Exit gesture 1sec maintain
@@ -183,5 +174,3 @@ while True:     # 영상 처리 시작
     img = cv2.flip(img, 1)            #인간이 보기 편한 거울 화면으로 출력
     #cv2.imshow("AIVM", img)         #웹캠 출력
 
-    if cv2.waitKey(1) & 0xFF == 27:   #Esc 누르면 종료
-        break

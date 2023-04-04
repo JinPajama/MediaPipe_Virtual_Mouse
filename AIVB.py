@@ -4,6 +4,7 @@ import numpy as np
 import time
 import sys
 import math
+import os
 
 ml = 150
 max_x, max_y = 250 + ml, 50
@@ -112,10 +113,8 @@ j = 0
 k = 0
 z = 2
 while True:
-    proc = None
-    if proc:
-        proc.terminate()
-        proc = None
+    if os.path.exists("stop.txt"):
+        break
     
     _, frm = cap.read()
     frm = cv2.flip(frm, 1)
@@ -140,12 +139,15 @@ while True:
         
         if finger == [1,0,0,0,1]:
             z = 0
+            k = 1
         
-        if finger == [0,1,1,1,0]:
+        if finger == [0,1,0,0,1]:
             z = 1
+            k = 2
 
         if finger == [0,0,0,1,1]:
             z = 2
+            k = 0
         
             
         if finger == [0,0,0,0,1]:
@@ -187,7 +189,7 @@ while True:
 
                 if index_raised(yi, y9):
                     cv2.line(mask, (prevx, prevy), (x, y), 0 , thick)
-                    #cv2.line(imgCanvas, (prevx, prevy), (x, y), drawColor, brushThickness)
+                    #cv2.line(imgCanvas, (prevx, prevy), (x, y), (255,0,0), thick)
                     prevx, prevy = x, y
 
                 else: 
@@ -208,6 +210,7 @@ while True:
                 else:
                     if var_inits:
                         cv2.line(mask, (xii, yii), (x, y), 0 , thick)
+                        #cv2.line(imgCanvas, (xii, yii), (x, y), (255,0,0), thick)
                         var_inits = False
 
             elif curr_tool == "rectangle":      #직사각형
@@ -224,6 +227,7 @@ while True:
                 else:
                     if var_inits:
                         cv2.rectangle(mask, (xii, yii), (x, y), 0 , thick)
+                        #cv2.rectangle(imgCanvas, (xii, yii), (x, y), (255, 0, 0), thick)
                         var_inits = False
 
             elif curr_tool == "circle":         # 원
@@ -239,7 +243,8 @@ while True:
 
                 else:
                     if var_inits:
-                        cv2.circle(mask, (xii, yii), int(((xii-x)**2 + (yii-y)**2)**0.5), (0,255,0) , thick)
+                        cv2.circle(mask, (xii, yii), int(((xii-x)**2 + (yii-y)**2)**0.5), 0 , thick)
+                        # cv2.circle(imgCanvas, (xii, yii), int(((xii-x)**2 + (yii-y)**2)**0.5), (255, 0, 0), thick)
                         var_inits = False
 
             elif curr_tool == "erase":          # 지우개 
@@ -249,11 +254,12 @@ while True:
                 if index_raised(yi, y9):
                     cv2.circle(frm, (x, y), 30, (0,0,0), -1)
                     cv2.circle(mask, (x, y), 30, 255, -1)
+                    cv2.circle(imgCanvas, (x, y), 30, (255,255,255), -1)
 
     op = cv2.bitwise_and(frm, frm, mask=mask)
 
-    
     frm[:,:,z] = op[:,:,z]
+    frm[:,:,k] = op[:,:,k]
 
     frm[:max_y,ml:max_x] = cv2.addWeighted(tools, 0.7, frm[:max_y, ml:max_x], 0.3, 0)
 
@@ -262,7 +268,7 @@ while True:
     cv2.imshow("AIVB", frm)
     cv2.imshow("Canvas", imgCanvas)
 
-    if cv2.waitKey(1) == 27: 
+    if cv2.waitKey(1) == 27:
         cv2.destroyAllWindows()
         cap.release()
         break
