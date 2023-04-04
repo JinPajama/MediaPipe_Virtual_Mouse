@@ -189,7 +189,7 @@ while True:
 
                 if index_raised(yi, y9):
                     cv2.line(mask, (prevx, prevy), (x, y), 0 , thick)
-                    #cv2.line(imgCanvas, (prevx, prevy), (x, y), (255,0,0), thick)
+                    cv2.line(imgCanvas, (prevx, prevy), (x, y), (255,0,0), thick)
                     prevx, prevy = x, y
 
                 else: 
@@ -210,7 +210,7 @@ while True:
                 else:
                     if var_inits:
                         cv2.line(mask, (xii, yii), (x, y), 0 , thick)
-                        #cv2.line(imgCanvas, (xii, yii), (x, y), (255,0,0), thick)
+                        cv2.line(imgCanvas, (xii, yii), (x, y), (255,0,0), thick)
                         var_inits = False
 
             elif curr_tool == "rectangle":      #직사각형
@@ -227,7 +227,7 @@ while True:
                 else:
                     if var_inits:
                         cv2.rectangle(mask, (xii, yii), (x, y), 0 , thick)
-                        #cv2.rectangle(imgCanvas, (xii, yii), (x, y), (255, 0, 0), thick)
+                        cv2.rectangle(imgCanvas, (xii, yii), (x, y), (255, 0, 0), thick)
                         var_inits = False
 
             elif curr_tool == "circle":         # 원
@@ -244,7 +244,7 @@ while True:
                 else:
                     if var_inits:
                         cv2.circle(mask, (xii, yii), int(((xii-x)**2 + (yii-y)**2)**0.5), 0 , thick)
-                        # cv2.circle(imgCanvas, (xii, yii), int(((xii-x)**2 + (yii-y)**2)**0.5), (255, 0, 0), thick)
+                        cv2.circle(imgCanvas, (xii, yii), int(((xii-x)**2 + (yii-y)**2)**0.5), (255, 0, 0), thick)
                         var_inits = False
 
             elif curr_tool == "erase":          # 지우개 
@@ -262,9 +262,11 @@ while True:
     frm[:,:,k] = op[:,:,k]
 
     frm[:max_y,ml:max_x] = cv2.addWeighted(tools, 0.7, frm[:max_y, ml:max_x], 0.3, 0)
+    imgCanvas[:max_y,ml:max_x] = cv2.addWeighted(tools, 0.7, frm[:max_y, ml:max_x], 0.3, 0)
 
     cv2.putText(frm, curr_tool,(270 + ml, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0,0,255), 2)
     cv2.putText(frm, thickness,(450 + ml, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0,0,255), 2)
+
     cv2.imshow("AIVB", frm)
     cv2.imshow("Canvas", imgCanvas)
 
