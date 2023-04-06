@@ -165,7 +165,7 @@ while True:     # 영상 처리 시작
             i += 1
             time.sleep(0.05)
             
-        if i > 15 :
+        if i > 10 :
             cv2.destroyAllWindows()
             cap.release()
             sys.exit(0)
