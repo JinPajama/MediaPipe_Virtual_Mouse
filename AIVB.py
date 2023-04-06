@@ -20,7 +20,7 @@ thickness = ""
 width = 640
 height = 480
 i = 0
-code = (255,0,0)
+code = (0,255,0)
 
 hmin = 13
 hmax = 128
@@ -265,7 +265,6 @@ while True:
     frm[:,:,k] = op[:,:,k]
 
     frm[:max_y,ml:max_x] = cv2.addWeighted(tools, 0.7, frm[:max_y, ml:max_x], 0.3, 0)
-    imgCanvas[:max_y,ml:max_x] = cv2.addWeighted(tools, 0.7, frm[:max_y, ml:max_x], 0.3, 0)
 
     cv2.putText(frm, curr_tool,(270 + ml, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0,0,255), 2)
     cv2.putText(frm, thickness,(450 + ml, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0,0,255), 2)
