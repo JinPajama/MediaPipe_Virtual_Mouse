@@ -10,17 +10,17 @@ from pycaw.pycaw import AudioUtilities, IAudioEndpointVolume
 import os
 
 cap = cv2.VideoCapture(0)                           #비디오 캡쳐
-cap.set(cv2.CAP_PROP_FRAME_WIDTH, 640)              
-cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
-cap.set(cv2.CAP_PROP_FPS, 60)
+cap.set(cv2.CAP_PROP_FRAME_WIDTH, 320)              
+cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 240)
+cap.set(cv2.CAP_PROP_FPS, 30)
 
 initHand = mp.solutions.hands  # Initializing mediapipe
 # Object of mediapipe with "arguments for the hands module" 미디어파이프 내부 핸즈 모듈 
-mainHand = initHand.Hands(min_detection_confidence=0.8, min_tracking_confidence=0.8) # 80% 이상의 정확도일 경우에만 탐지 및 추적
+mainHand = initHand.Hands(min_detection_confidence=0.5, min_tracking_confidence=0.5) # 80% 이상의 정확도일 경우에만 탐지 및 추적
 draw = mp.solutions.drawing_utils  # 각 핑거 인덱스 간의 연결을 그릴 개체 (랜드마크 사이 선)
 wScr, hScr = autopy.screen.size()  # 화면의 높이와 너비를 출력 (1920 x 1080)
-scale_factor_x = wScr / 640
-scale_factor_y = hScr / 480
+scale_factor_x = wScr / 320
+scale_factor_y = hScr / 240
 pX, pY = 0, 0  # Previous x and y location  # 마우스 지터링 방지를 위한 이전 x,y 좌표값 변수
 cX, cY = 0, 0  # Current x and y location   # 현재 마우스 좌표 변수
 
@@ -111,22 +111,22 @@ while True:     # 영상 처리 시작
         finger = fingers(lmList)  # finger에 손가락 접힘 0, 1 구분 배열 전달
         
         if finger == [1,1,1,1,1]:  # 포인팅 핑거가 위에 있고 엄지손가락이 아래에 있는지 확인
-            x3 = np.interp(x4, (75, 640 - 75), (0, wScr))  # 화면 너비를 기준으로 보간법
-            y3 = np.interp(y4, (75, 480 - 75), (0, hScr))  # 화면 높이를 기준으로 보간법
+            x3 = np.interp(x4, (37, 320 - 37), (0, wScr))  # 화면 너비를 기준으로 보간법
+            y3 = np.interp(y4, (37, 240 - 37), (0, hScr))  # 화면 높이를 기준으로 보간법
             
             cX = pX + (x3 - pX)/3  # 지터링 방지 및 부드러운 움직임을 위한 보간법 값 나누기
-            cY = pY + (y3 - pY)/3 
+            cY = pY + (y3 - pY)/3
             
             Controll.flag = True
             autopy.mouse.move(wScr-cX, cY)  # x축 값은 카메라 기준 좌우반전, y축은 반전 필요 x
             pX, pY = cX, cY  # pre 값에 current 값 넣어주기
             
         if finger == [0,1,1,1,1] and Controll.flag:  # Checks to see if the pointer finger is down and thumb finger is up
-            pyautogui.click()  # Left click
+            autopy.mouse.click()
             Controll.flag = False
         
         if finger == [1,0,1,1,1] and Controll.flag:  # Checks to see if the pointer finger is down and thumb finger is up
-            pyautogui.click(button= 'right')  # Left click
+            pyautogui.click(button= 'right')  # right click
             Controll.flag = False
         
         if finger == [0,0,0,0,0]:
@@ -134,8 +134,8 @@ while True:     # 영상 처리 시작
                 Controll.grabflag = True
                 autopy.mouse.toggle(autopy.mouse.Button.LEFT, True)
 
-            x3 = np.interp(x4, (75, 640 - 75), (0, wScr))  # 화면 너비를 기준으로 보간법
-            y3 = np.interp(y4, (75, 480 - 75), (0, hScr))  # 화면 높이를 기준으로 보간법
+            x3 = np.interp(x4, (37, 320 - 37), (0, wScr))  # 화면 너비를 기준으로 보간법
+            y3 = np.interp(y4, (37, 240 - 37), (0, hScr))  # 화면 높이를 기준으로 보간법
             
             cX = pX + (x3 - pX)/3  # 지터링 방지 및 부드러운 움직임을 위한 보간법 값 나누기
             cY = pY + (y3 - pY)/3

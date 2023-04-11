@@ -17,8 +17,8 @@ thick_min = 1
 thick_max = 10
 prevx, prevy = 0, 0
 thickness = ""
-width = 640
-height = 480
+width = 1280
+height = 720
 i = 0
 code = (0,255,0)
 
@@ -43,7 +43,7 @@ def index_raised(yi, y9):
     
     return False
 
-cap =cv2.VideoCapture(0)
+cap =cv2.VideoCapture(0, cv2.CAP_DSHOW)
 cap.set(cv2.CAP_PROP_FRAME_WIDTH, width)
 cap.set(cv2.CAP_PROP_FRAME_HEIGHT, height)
 
@@ -56,9 +56,6 @@ tools = tools.astype('uint8')
 
 imgCanvas = np.zeros((height, width, 3), np.uint8)
 imgCanvas.fill(255)
-
-mask = np.ones((height,width))*255
-mask = mask.astype('uint8')
 
 def handLandmarks(colorImg):                  # 이미지 한 장을 받아 손에 있는 21가지 관절 번호 부여
     landmarkList = []  # Default values if no landmarks are tracked  아무런 랜드마크 트래킹 안될 경우 빈 배열 값
@@ -73,13 +70,13 @@ def handLandmarks(colorImg):                  # 이미지 한 장을 받아 손�
                 wh = which_hand
                 if wh == "Right":
                    # draw.draw_landmarks(frm, hand, initHand.HAND_CONNECTIONS)  # Draws each individual index on the hand with connections
-                    h, w, c = frm.shape  # Height, width and channel on the image
+                    h, w, c = img.shape  # Height, width and channel on the image
                     centerX, centerY = int(landmark.x * w), int(landmark.y * h)  # Converts the decimal coordinates relative to the image for each index
                     landmarkList.append([index, centerX, centerY])  # Adding index and its coordinates to a list
 
                 elif wh == "Left":
                    # draw.draw_landmarks(frm, hand, initHand.HAND_CONNECTIONS)  # Draws each individual index on the hand with connections
-                    h, w, c = frm.shape  # Height, width and channel on the image
+                    h, w, c = img.shape  # Height, width and channel on the image
                     centerX, centerY = int(landmark.x * w), int(landmark.y * h)  # Converts the decimal coordinates relative to the image for each index
                     landmarkList.append([index, centerX, centerY])  # Adding index and its coordinates to a list
                 
@@ -117,10 +114,10 @@ while True:
     if os.path.exists("stop.txt"):
         break
     
-    _, frm = cap.read()
-    frm = cv2.flip(frm, 1)
+    _, img = cap.read()
+    img = cv2.flip(img, 1)
 
-    rgb = cv2.cvtColor(frm, cv2.COLOR_BGR2RGB)
+    rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
 
     op = mainHand.process(rgb)
     lmList = handLandmarks(rgb)
@@ -164,10 +161,8 @@ while True:
             
     if op.multi_hand_landmarks:
         for i in op.multi_hand_landmarks:
-            draw.draw_landmarks(frm, i ,initHand.HAND_CONNECTIONS)
+            draw.draw_landmarks(img, i ,initHand.HAND_CONNECTIONS)
             x, y = int(i.landmark[8].x * width), int(i.landmark[8].y * height)
-
-            cv2.circle(imgCanvas, (x,y), 5, (255,255,0) , 2)
 
             if x < max_x and y < max_y and x > ml:      #선택
                 if time_init:
@@ -175,7 +170,7 @@ while True:
                     time_init = False
                 ptime = time.time()
 
-                cv2.circle(frm, (x, y), rad, (0, 255, 255), 2)
+                cv2.circle(img, (x, y), rad, (0, 255, 255), 2)
                 rad -= 1
 
                 if(ptime - ctime) > 0.8:
@@ -193,7 +188,6 @@ while True:
                 y9 = int(i.landmark[9].y * height)
 
                 if index_raised(yi, y9):
-                    cv2.line(mask, (prevx, prevy), (x, y), 0 , thick)
                     cv2.line(imgCanvas, (prevx, prevy), (x, y), code, thick)
                     prevx, prevy = x, y
 
@@ -210,11 +204,10 @@ while True:
                         xii, yii = x,y
                         var_inits = True
 
-                    cv2.line(frm, (xii, yii), (x, y), (50, 152, 255), thick)
+                    cv2.line(img, (xii, yii), (x, y), (50, 152, 255), thick)
 
                 else:
                     if var_inits:
-                        cv2.line(mask, (xii, yii), (x, y), 0 , thick)
                         cv2.line(imgCanvas, (xii, yii), (x, y), code, thick)
                         var_inits = False
 
@@ -227,11 +220,10 @@ while True:
                         xii, yii = x,y
                         var_inits = True
 
-                    cv2.rectangle(frm, (xii, yii), (x, y), (0, 255, 255), thick)
+                    cv2.rectangle(img, (xii, yii), (x, y), (0, 255, 255), thick)
 
                 else:
                     if var_inits:
-                        cv2.rectangle(mask, (xii, yii), (x, y), 0 , thick)
                         cv2.rectangle(imgCanvas, (xii, yii), (x, y), code, thick)
                         var_inits = False
 
@@ -244,11 +236,10 @@ while True:
                         xii, yii = x,y
                         var_inits = True
 
-                    cv2.circle(frm, (xii, yii), int(((xii-x)**2 + (yii-y)**2)**0.5), (255, 255, 0), thick)
+                    cv2.circle(img, (xii, yii), int(((xii-x)**2 + (yii-y)**2)**0.5), (255, 255, 0), thick)
 
                 else:
                     if var_inits:
-                        cv2.circle(mask, (xii, yii), int(((xii-x)**2 + (yii-y)**2)**0.5), 0 , thick)
                         cv2.circle(imgCanvas, (xii, yii), int(((xii-x)**2 + (yii-y)**2)**0.5), code, thick)
                         var_inits = False
 
@@ -257,24 +248,21 @@ while True:
                 y9 = int(i.landmark[9].y * height)
 
                 if index_raised(yi, y9):
-                    cv2.circle(frm, (x, y), 30, (0,0,0), -1)
-                    cv2.circle(mask, (x, y), 30, 255, -1)
+                    cv2.circle(img, (x, y), 30, (0,0,0), -1)
                     cv2.circle(imgCanvas, (x, y), 30, (255,255,255), -1)
+    
+    alpha = 0.1
+    blended = cv2.addWeighted(imgCanvas, alpha, img, 1-alpha, 0)
 
-    op = cv2.bitwise_and(frm, frm, mask=mask)
+    img[:max_y,ml:max_x] = cv2.addWeighted(tools, 0.7, img[:max_y, ml:max_x], 0.3, 0)
+    imgCanvas[:max_y,ml:max_x] = cv2.addWeighted(tools, 0.7, img[:max_y, ml:max_x], 0.3, 0)
+    blended = cv2.addWeighted(img, alpha, imgCanvas, 1-alpha, 0)
 
-    frm[:,:,z] = op[:,:,z]
-    frm[:,:,k] = op[:,:,k]
-
-    frm[:max_y,ml:max_x] = cv2.addWeighted(tools, 0.7, frm[:max_y, ml:max_x], 0.3, 0)
-    imgCanvas[:max_y,ml:max_x] = cv2.addWeighted(tools, 0.7, frm[:max_y, ml:max_x], 0.3, 0)
-
-    cv2.putText(frm, curr_tool,(270 + ml, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0,0,255), 2)
-    cv2.putText(frm, thickness,(450 + ml, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0,0,255), 2)
-    output = cv2.bitwise_or(frm, imgCanvas)
+    cv2.putText(img, curr_tool,(270 + ml, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0,0,255), 2)
+    cv2.putText(img, thickness,(450 + ml, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0,0,255), 2)
 
     #cv2.imshow("AIVB", frm)
-    cv2.imshow("Canvas", imgCanvas)
+    cv2.imshow("Canvas", blended)
 
     if cv2.waitKey(1) == 27:
         cv2.destroyAllWindows()
