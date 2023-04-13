@@ -5,6 +5,7 @@ import time
 import sys
 import math
 import os
+import pyautogui
 
 ml = 150
 max_x, max_y = 250 + ml, 50
@@ -17,8 +18,8 @@ thick_min = 1
 thick_max = 10
 prevx, prevy = 0, 0
 thickness = ""
-width = 1280
-height = 720
+width = 1920
+height = 1080
 i = 0
 code = (0,255,0)
 
@@ -43,19 +44,29 @@ def index_raised(yi, y9):
     
     return False
 
-cap =cv2.VideoCapture(0, cv2.CAP_DSHOW)
+cap =cv2.VideoCapture(1, cv2.CAP_DSHOW)
 cap.set(cv2.CAP_PROP_FRAME_WIDTH, width)
 cap.set(cv2.CAP_PROP_FRAME_HEIGHT, height)
 
 initHand = mp.solutions.hands
 mainHand = initHand.Hands(min_detection_confidence = 0.6, min_tracking_confidence = 0.6, max_num_hands = 1)
 draw = mp.solutions.drawing_utils
+pX, pY = 0, 0 
+cX, cY = 0, 0
 
 tools = cv2.imread("photo/tools.png")
 tools = tools.astype('uint8')
 
-imgCanvas = np.zeros((height, width, 3), np.uint8)
-imgCanvas.fill(255)
+# 바탕화면 캡쳐
+screenshot = pyautogui.screenshot()
+# 이미지를 NumPy 배열로 변환
+screenshot_np = np.array(screenshot)
+# 이미지를 BGR 형식으로 변환
+screenshot_bgr = cv2.cvtColor(screenshot_np, cv2.COLOR_RGB2BGR)
+Scrshot = cv2.resize(screenshot_bgr, (width, height))
+
+imgCanvas = Scrshot.copy()
+
 
 def handLandmarks(colorImg):                  # 이미지 한 장을 받아 손에 있는 21가지 관절 번호 부여
     landmarkList = []  # Default values if no landmarks are tracked  아무런 랜드마크 트래킹 안될 경우 빈 배열 값
@@ -164,6 +175,12 @@ while True:
             draw.draw_landmarks(img, i ,initHand.HAND_CONNECTIONS)
             x, y = int(i.landmark[8].x * width), int(i.landmark[8].y * height)
 
+            cX = pX + (x4 - pX)/3  # 지터링 방지 및 부드러운 움직임을 위한 보간법 값 나누기
+            cY = pY + (y4 - pY)/3
+
+            pyautogui.moveTo(cX, cY)  # x축 값은 카메라 기준 좌우반전, y축은 반전 필요 x
+            pX, pY = cX, cY
+
             if x < max_x and y < max_y and x > ml:      #선택
                 if time_init:
                     ctime = time.time()
@@ -251,7 +268,7 @@ while True:
                     cv2.circle(img, (x, y), 30, (0,0,0), -1)
                     cv2.circle(imgCanvas, (x, y), 30, (255,255,255), -1)
     
-    alpha = 0.1
+    alpha = 0
     blended = cv2.addWeighted(imgCanvas, alpha, img, 1-alpha, 0)
 
     img[:max_y,ml:max_x] = cv2.addWeighted(tools, 0.7, img[:max_y, ml:max_x], 0.3, 0)
@@ -260,6 +277,9 @@ while True:
 
     cv2.putText(img, curr_tool,(270 + ml, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0,0,255), 2)
     cv2.putText(img, thickness,(450 + ml, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0,0,255), 2)
+
+    cv2.namedWindow('Canvas', cv2.WND_PROP_FULLSCREEN)
+    cv2.setWindowProperty('Canvas', cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)
 
     #cv2.imshow("AIVB", frm)
     cv2.imshow("Canvas", blended)
