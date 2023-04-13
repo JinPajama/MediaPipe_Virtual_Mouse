@@ -18,8 +18,8 @@ thick_min = 1
 thick_max = 10
 prevx, prevy = 0, 0
 thickness = ""
-width = 1920
-height = 1080
+width = 1280
+height = 720
 i = 0
 code = (0,255,0)
 
@@ -49,8 +49,10 @@ cap.set(cv2.CAP_PROP_FRAME_WIDTH, width)
 cap.set(cv2.CAP_PROP_FRAME_HEIGHT, height)
 
 initHand = mp.solutions.hands
-mainHand = initHand.Hands(min_detection_confidence = 0.6, min_tracking_confidence = 0.6, max_num_hands = 1)
+mainHand = initHand.Hands(min_detection_confidence = 0.5, min_tracking_confidence = 0.5, max_num_hands = 1)
 draw = mp.solutions.drawing_utils
+Scrsize= pyautogui.size()
+wScr, hScr = Scrsize[0:]
 pX, pY = 0, 0 
 cX, cY = 0, 0
 
@@ -127,6 +129,7 @@ while True:
     
     _, img = cap.read()
     img = cv2.flip(img, 1)
+    img = cv2.resize(img, (width, height))
 
     rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
 
@@ -174,12 +177,11 @@ while True:
         for i in op.multi_hand_landmarks:
             draw.draw_landmarks(img, i ,initHand.HAND_CONNECTIONS)
             x, y = int(i.landmark[8].x * width), int(i.landmark[8].y * height)
+            x3 = np.interp(x, (0, width), (0, wScr))  # 화면 너비를 기준으로 보간법
+            y3 = np.interp(y, (0, height), (0, hScr))  # 화면 높이를 기준으로 보간법
 
-            cX = pX + (x4 - pX)/3  # 지터링 방지 및 부드러운 움직임을 위한 보간법 값 나누기
-            cY = pY + (y4 - pY)/3
-
-            pyautogui.moveTo(cX, cY)  # x축 값은 카메라 기준 좌우반전, y축은 반전 필요 x
-            pX, pY = cX, cY
+            pyautogui.moveTo(x3, y3)  # x축 값은 카메라 기준 좌우반전, y축은 반전 필요 x
+            pX, pY = x3, y3
 
             if x < max_x and y < max_y and x > ml:      #선택
                 if time_init:
@@ -269,8 +271,6 @@ while True:
                     cv2.circle(imgCanvas, (x, y), 30, (255,255,255), -1)
     
     alpha = 0
-    blended = cv2.addWeighted(imgCanvas, alpha, img, 1-alpha, 0)
-
     img[:max_y,ml:max_x] = cv2.addWeighted(tools, 0.7, img[:max_y, ml:max_x], 0.3, 0)
     imgCanvas[:max_y,ml:max_x] = cv2.addWeighted(tools, 0.7, img[:max_y, ml:max_x], 0.3, 0)
     blended = cv2.addWeighted(img, alpha, imgCanvas, 1-alpha, 0)
