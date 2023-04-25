@@ -31,7 +31,6 @@ volRange = volume.GetVolumeRange()
 
 minVol = volRange[0]                          # -65.25       pycaw 내부 0 = -65.25 맵핑
 maxVol = volRange[1]                          #   0.0
-print(volRange)
 hmin = 10                                     # 화면 좌표상 minimum 볼륨 거리
 hmax = 150                                    # 화면 좌표상 max 볼륨 거리
 
