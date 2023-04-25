@@ -57,7 +57,7 @@ wScr, hScr = Scrsize[0:]
 pX, pY = 0, 0 
 cX, cY = 0, 0
 
-tools = cv2.imread("photo/tools.png")
+tools = cv2.imread("D:/github/photo/tools.png")
 tools = tools.astype('uint8')
 
 # 바탕화면 캡쳐
@@ -70,8 +70,8 @@ Scrshot = cv2.resize(screenshot_bgr, (width, height))
 
 imgCanvas = Scrshot.copy()
 
-folder_path = './SaveImage'
-folder_name = 'SaveImage'
+folder_path = './Image'
+folder_name = 'Image'
 file_name = 'image.jpg'
 file_name_base, file_extension = os.path.splitext(file_name)
 file_index = 1
@@ -146,7 +146,6 @@ while True:
     img = cv2.resize(img, (width, height))
 
     rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-    print(is_save)
 
     op = mainHand.process(rgb)
     lmList = handLandmarks(rgb)
@@ -173,7 +172,6 @@ while True:
             length = math.hypot(x1 - x2, y1 - y2)
             length1 = int(length)
             thick = int(np.interp(length1, [hmin, hmax], [thick_min, thick_max]))
-            print(thick)
             thickness = "{}".format(thick)
         
         if finger == [1,0,0,0,1]:
