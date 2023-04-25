@@ -44,7 +44,8 @@ def index_raised(yi, y9):
     
     return False
 
-cap =cv2.VideoCapture(1, cv2.CAP_DSHOW)
+
+cap =cv2.VideoCapture(0, cv2.CAP_DSHOW)
 cap.set(cv2.CAP_PROP_FRAME_WIDTH, width)
 cap.set(cv2.CAP_PROP_FRAME_HEIGHT, height)
 
@@ -69,6 +70,14 @@ Scrshot = cv2.resize(screenshot_bgr, (width, height))
 
 imgCanvas = Scrshot.copy()
 
+folder_path = './SaveImage'
+folder_name = 'SaveImage'
+file_name = 'image.jpg'
+file_name_base, file_extension = os.path.splitext(file_name)
+file_index = 1
+
+if not os.path.exists(folder_path):
+    os.mkdir(folder_path)
 
 def handLandmarks(colorImg):                  # 이미지 한 장을 받아 손에 있는 21가지 관절 번호 부여
     landmarkList = []  # Default values if no landmarks are tracked  아무런 랜드마크 트래킹 안될 경우 빈 배열 값
@@ -123,6 +132,11 @@ def fingers(landmarks):                     # 손가락 접힘을 0과 1로 구�
 j = 0
 k = 0
 z = 2
+
+is_erase = False
+is_save = False
+is_index_save = False
+
 while True:
     if os.path.exists("stop.txt"):
         break
@@ -132,6 +146,7 @@ while True:
     img = cv2.resize(img, (width, height))
 
     rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+    print(is_save)
 
     op = mainHand.process(rgb)
     lmList = handLandmarks(rgb)
@@ -140,7 +155,19 @@ while True:
         x1, y1 = lmList[8][1:]  # 검지 좌표
         x2, y2 = lmList[4][1:]  # 엄지 좌표
         x4, y4 = lmList[9][1:]
+        xmid, ymid = lmList[12][1:]
+
         finger = fingers(lmList)  # finger에 손가락 접힘 0, 1 구분 배열 전달
+
+        if finger == [1,0,0,0,0]:
+            if is_save == False:     
+                file_path = os.path.join(folder_path, file_name)
+                if os.path.exists(file_path):
+                    file_name = f'{file_name_base}_{file_index}{file_extension}'
+                    file_path = os.path.join(folder_path, file_name)
+                    file_index += 1
+                cv2.imwrite(file_path, imgCanvas)
+                is_save = True
 
         if finger == [1,1,0,0,0]:
             length = math.hypot(x1 - x2, y1 - y2)
@@ -164,14 +191,14 @@ while True:
             k = 0
             code = (0,255,0)
         
-        if finger == [0,0,0,0,1]:
-            j += 1
-            time.sleep(0.05)
+        #if finger == [0,0,0,0,1]:
+        #    j += 1
+        #    time.sleep(0.05)
             
-        if j > 10 :
-            cap.release()
-            cv2.destroyAllWindows()
-            sys.exit(0)
+        #if j > 10 :
+        #    cap.release()
+        #    cv2.destroyAllWindows()
+        #    sys.exit(0)
             
     if op.multi_hand_landmarks:
         for i in op.multi_hand_landmarks:
@@ -182,6 +209,11 @@ while True:
 
             pyautogui.moveTo(x3, y3)  # x축 값은 카메라 기준 좌우반전, y축은 반전 필요 x
             pX, pY = x3, y3
+
+            if ((y4 - ymid) < 45 and (y4 - ymid) > 20) and ((x4 - xmid) < -40 or (x4 - xmid) > 50):
+                cv2.destroyAllWindows()
+                cap.release()
+                sys.exit(0)
 
             if x < max_x and y < max_y and x > ml:      #선택
                 if time_init:
@@ -203,6 +235,8 @@ while True:
                 rad = 40
             
             if curr_tool == "draw":            # 그리기
+                is_erase = False
+                is_save = False
                 xi, yi = int(i.landmark[12].x * width), int(i.landmark[12].y * height)
                 y9 = int(i.landmark[9].y * height)
 
@@ -215,6 +249,9 @@ while True:
                     prevy = y
 
             elif curr_tool == "line":           #직선
+                is_erase = False
+                is_save = False
+                is_index_save = False
                 xi, yi = int(i.landmark[12].x * width), int(i.landmark[12].y * height)
                 y9 = int(i.landmark[9].y * height)
 
@@ -231,6 +268,9 @@ while True:
                         var_inits = False
 
             elif curr_tool == "rectangle":      #직사각형
+                is_erase = False
+                is_save = False
+                is_index_save = False
                 xi, yi = int(i.landmark[12].x * width), int(i.landmark[12].y * height)
                 y9 = int(i.landmark[9].y * height)
 
@@ -247,6 +287,9 @@ while True:
                         var_inits = False
 
             elif curr_tool == "circle":         # 원
+                is_erase = False
+                is_save = False
+                is_index_save = False
                 xi, yi = int(i.landmark[12].x * width), int(i.landmark[12].y * height)
                 y9 = int(i.landmark[9].y * height)
 
@@ -262,13 +305,28 @@ while True:
                         cv2.circle(imgCanvas, (xii, yii), int(((xii-x)**2 + (yii-y)**2)**0.5), code, thick)
                         var_inits = False
 
-            elif curr_tool == "erase":          # 지우개 
+            elif curr_tool == "erase":          # 지우개
+                is_save = False 
                 xi, yi = int(i.landmark[12].x * width), int(i.landmark[12].y * height)
                 y9 = int(i.landmark[9].y * height)
 
                 if index_raised(yi, y9):
-                    cv2.circle(img, (x, y), 30, (0,0,0), -1)
-                    cv2.circle(imgCanvas, (x, y), 30, (255,255,255), -1)
+                    if not is_erase:
+                        imgCanvas = Scrshot.copy()
+                        is_erase = True
+            
+            if finger == [1,0,0,0,0]:
+                if is_save == False:     
+                    file_path = os.path.join(folder_path, file_name)
+                    if os.path.exists(file_path):
+                        file_name = f'{file_name_base}_{file_index}{file_extension}'
+                        file_path = os.path.join(folder_path, file_name)
+                        if not is_index_save:
+                            file_index += 1
+                            is_index_save = True
+                    cv2.imwrite(file_path, imgCanvas)
+                    is_save = True
+
     
     alpha = 0
     img[:max_y,ml:max_x] = cv2.addWeighted(tools, 0.7, img[:max_y, ml:max_x], 0.3, 0)

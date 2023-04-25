@@ -108,18 +108,27 @@ while True:     # 영상 처리 시작
         x1, y1 = lmList[8][1:]  # 검지 좌표
         x2, y2 = lmList[4][1:]  # 엄지 좌표
         x4, y4 = lmList[9][1:]
+        xmid, ymid = lmList[12][1:]
+
         finger = fingers(lmList)  # finger에 손가락 접힘 0, 1 구분 배열 전달
         
         if finger == [1,1,1,1,1]:  # 포인팅 핑거가 위에 있고 엄지손가락이 아래에 있는지 확인
             x3 = np.interp(x4, (37, 320 - 37), (0, wScr))  # 화면 너비를 기준으로 보간법
             y3 = np.interp(y4, (37, 240 - 37), (0, hScr))  # 화면 높이를 기준으로 보간법
-            
+
             cX = pX + (x3 - pX)/3  # 지터링 방지 및 부드러운 움직임을 위한 보간법 값 나누기
             cY = pY + (y3 - pY)/3
             
             Controll.flag = True
             autopy.mouse.move(wScr-cX, cY)  # x축 값은 카메라 기준 좌우반전, y축은 반전 필요 x
             pX, pY = cX, cY  # pre 값에 current 값 넣어주기
+
+            
+
+            if ((y4 - ymid) < 45 and (y4 - ymid) > 20) and ((x4 - xmid) < -40 or (x4 - xmid) > 50):
+                cv2.destroyAllWindows()
+                cap.release()
+                sys.exit(0)
             
         if finger == [0,1,1,1,1] and Controll.flag:  # Checks to see if the pointer finger is down and thumb finger is up
             autopy.mouse.click()
@@ -158,17 +167,17 @@ while True:     # 영상 처리 시작
             length = math.hypot(x1 - x2, y1 - y2)
             vol = np.interp(length, [hmin, hmax], [minVol, maxVol])
             
-            volume.SetMasterVolumeLevel(vol, None) 
+            volume.SetMasterVolumeLevel(vol, None)
         
         # Exit gesture 1sec maintain
-        if finger == [0,0,0,0,1]:
-            i += 1
-            time.sleep(0.05)
+        #if finger == [0,0,0,0,1]:
+        #    i += 1
+        #    time.sleep(0.05)
             
-        if i > 10 :
-            cv2.destroyAllWindows()
-            cap.release()
-            sys.exit(0)
+        #if i > 10 :
+        #    cv2.destroyAllWindows()
+        #    cap.release()
+        #    sys.exit(0)
 
 
     img = cv2.flip(img, 1)            #인간이 보기 편한 거울 화면으로 출력
