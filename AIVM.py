@@ -13,6 +13,7 @@ cap = cv2.VideoCapture(0)                           #비디오 캡쳐
 cap.set(cv2.CAP_PROP_FRAME_WIDTH, 320)              
 cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 240)
 cap.set(cv2.CAP_PROP_FPS, 30)
+cv2.setNumThreads(2)
 
 initHand = mp.solutions.hands  # Initializing mediapipe
 # Object of mediapipe with "arguments for the hands module" 미디어파이프 내부 핸즈 모듈 

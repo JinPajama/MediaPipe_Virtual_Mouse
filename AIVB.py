@@ -48,6 +48,7 @@ def index_raised(yi, y9):
 cap =cv2.VideoCapture(0, cv2.CAP_DSHOW)
 cap.set(cv2.CAP_PROP_FRAME_WIDTH, width)
 cap.set(cv2.CAP_PROP_FRAME_HEIGHT, height)
+cv2.setNumThreads(4)
 
 initHand = mp.solutions.hands
 mainHand = initHand.Hands(min_detection_confidence = 0.5, min_tracking_confidence = 0.5, max_num_hands = 1)
@@ -56,6 +57,8 @@ Scrsize= pyautogui.size()
 wScr, hScr = Scrsize[0:]
 pX, pY = 0, 0 
 cX, cY = 0, 0
+
+pyautogui.FAILSAFE = False
 
 tools = cv2.imread("D:/github/photo/tools.png")
 tools = tools.astype('uint8')
@@ -66,7 +69,7 @@ screenshot = pyautogui.screenshot()
 screenshot_np = np.array(screenshot)
 # 이미지를 BGR 형식으로 변환
 screenshot_bgr = cv2.cvtColor(screenshot_np, cv2.COLOR_RGB2BGR)
-Scrshot = cv2.resize(screenshot_bgr, (width, height))
+Scrshot = cv2.resize(screenshot_bgr, (width, height), interpolation=cv2.INTER_AREA)
 
 imgCanvas = Scrshot.copy()
 
@@ -143,7 +146,7 @@ while True:
     
     _, img = cap.read()
     img = cv2.flip(img, 1)
-    img = cv2.resize(img, (width, height))
+    img = cv2.resize(img, (width, height),interpolation=cv2.INTER_CUBIC)
 
     rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
 
