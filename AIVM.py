@@ -125,7 +125,7 @@ while True:     # 영상 처리 시작
 
             
 
-            if ((y4 - ymid) < 45 and (y4 - ymid) > 20) and ((x4 - xmid) < -40 or (x4 - xmid) > 50):
+            if ((y4 - ymid) < 45 and (y4 - ymid) > 20) and ((x4 - xmid) < -45 or (x4 - xmid) > 45):
                 cv2.destroyAllWindows()
                 cap.release()
                 sys.exit(0)

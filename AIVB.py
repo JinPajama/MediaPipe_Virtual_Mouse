@@ -211,7 +211,7 @@ while True:
             pyautogui.moveTo(x3, y3)  # x축 값은 카메라 기준 좌우반전, y축은 반전 필요 x
             pX, pY = x3, y3
 
-            if ((y4 - ymid) < 45 and (y4 - ymid) > 20) and ((x4 - xmid) < -40 or (x4 - xmid) > 50):
+            if ((y4 - ymid) < 45 and (y4 - ymid) > 20) and ((x4 - xmid) < -45 or (x4 - xmid) > 45):
                 cv2.destroyAllWindows()
                 cap.release()
                 sys.exit(0)
