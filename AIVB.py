@@ -60,7 +60,7 @@ cX, cY = 0, 0
 
 pyautogui.FAILSAFE = False
 
-tools = cv2.imread("D:/github/photo/tools.png")
+tools = cv2.imread("tools.png")
 tools = tools.astype('uint8')
 
 # 바탕화면 캡쳐

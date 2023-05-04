@@ -35,7 +35,7 @@ button = tk.Button(root, text="종료", command=lambda: stop_program(t, stop_eve
 button.pack()
 
 root.geometry('%dx%d+%d+%d' % (w, h, x, y))
-img = tk.Image("photo", file="D:/github/photo/SETIVB.png")
+img = tk.Image("photo", file="SETIVB.png")
 root.tk.call('wm', 'iconphoto', root._w, img)
 root.iconphoto(True, img)
 root.title('SETIVB')
