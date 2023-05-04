@@ -311,10 +311,19 @@ while True:
                 xi, yi = int(i.landmark[12].x * width), int(i.landmark[12].y * height)
                 y9 = int(i.landmark[9].y * height)
 
-                if index_raised(yi, y9):
-                    if not is_erase:
+                if not is_erase:
                         imgCanvas = Scrshot.copy()
                         is_erase = True
+
+            #elif curr_tool == "erase":          # 지우개
+            #    is_save = False 
+            #    xi, yi = int(i.landmark[12].x * width), int(i.landmark[12].y * height)
+            #    y9 = int(i.landmark[9].y * height)
+
+            #    if index_raised(yi, y9):
+            #        if not is_erase:
+            #            imgCanvas = Scrshot.copy()
+            #            is_erase = True
             
             if finger == [1,0,0,0,0]:
                 if is_save == False:     
