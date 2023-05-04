@@ -227,7 +227,6 @@ while True:
 
                 if(ptime - ctime) > 0.8:
                     curr_tool = getTool(x)
-                    print("your current tool set to : ", curr_tool)
                     time_init = True
                     rad = 40
 
