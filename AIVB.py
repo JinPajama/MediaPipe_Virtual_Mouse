@@ -344,9 +344,6 @@ while True:
     imgCanvas[:max_y,ml:max_x] = cv2.addWeighted(tools, 0.7, img[:max_y, ml:max_x], 0.3, 0)
     blended = cv2.addWeighted(img, alpha, imgCanvas, 1-alpha, 0)
 
-    cv2.putText(img, curr_tool,(270 + ml, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0,0,255), 2)
-    cv2.putText(img, thickness,(450 + ml, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0,0,255), 2)
-
     cv2.namedWindow('Canvas', cv2.WND_PROP_FULLSCREEN)
     cv2.setWindowProperty('Canvas', cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)
 
