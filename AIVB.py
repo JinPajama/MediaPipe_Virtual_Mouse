@@ -44,14 +44,16 @@ def index_raised(yi, y9):
     
     return False
 
+with open("index.txt", "r") as f1:
+    selected_webcam_index = int(f1.read())
 
-cap =cv2.VideoCapture(0, cv2.CAP_DSHOW)
+cap =cv2.VideoCapture(selected_webcam_index, cv2.CAP_DSHOW)
 cap.set(cv2.CAP_PROP_FRAME_WIDTH, width)
 cap.set(cv2.CAP_PROP_FRAME_HEIGHT, height)
 cv2.setNumThreads(4)
 
 initHand = mp.solutions.hands
-mainHand = initHand.Hands(min_detection_confidence = 0.5, min_tracking_confidence = 0.5, max_num_hands = 1)
+mainHand = initHand.Hands(max_num_hands=1, min_detection_confidence = 0.5, min_tracking_confidence = 0.5)
 draw = mp.solutions.drawing_utils
 Scrsize= pyautogui.size()
 wScr, hScr = Scrsize[0:]

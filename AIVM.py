@@ -9,7 +9,10 @@ from comtypes import CLSCTX_ALL
 from pycaw.pycaw import AudioUtilities, IAudioEndpointVolume
 import os
 
-cap = cv2.VideoCapture(0)                           #비디오 캡쳐
+with open("index.txt", "r") as f1:
+    selected_webcam_index = int(f1.read())
+
+cap =cv2.VideoCapture(selected_webcam_index, cv2.CAP_DSHOW)
 cap.set(cv2.CAP_PROP_FRAME_WIDTH, 320)              
 cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 240)
 cap.set(cv2.CAP_PROP_FPS, 30)
@@ -17,7 +20,7 @@ cv2.setNumThreads(2)
 
 initHand = mp.solutions.hands  # Initializing mediapipe
 # Object of mediapipe with "arguments for the hands module" 미디어파이프 내부 핸즈 모듈 
-mainHand = initHand.Hands(min_detection_confidence=0.5, min_tracking_confidence=0.5) # 80% 이상의 정확도일 경우에만 탐지 및 추적
+mainHand = initHand.Hands(max_num_hands=1, min_detection_confidence=0.5, min_tracking_confidence=0.5) # 80% 이상의 정확도일 경우에만 탐지 및 추적
 draw = mp.solutions.drawing_utils  # 각 핑거 인덱스 간의 연결을 그릴 개체 (랜드마크 사이 선)
 wScr, hScr = autopy.screen.size()  # 화면의 높이와 너비를 출력 (1920 x 1080)
 scale_factor_x = wScr / 320
@@ -116,8 +119,8 @@ while True:     # 영상 처리 시작
             x3 = np.interp(x4, (37, 320 - 37), (0, wScr))  # 화면 너비를 기준으로 보간법
             y3 = np.interp(y4, (37, 240 - 37), (0, hScr))  # 화면 높이를 기준으로 보간법
 
-            cX = pX + (x3 - pX)/3  # 지터링 방지 및 부드러운 움직임을 위한 보간법 값 나누기
-            cY = pY + (y3 - pY)/3
+            cX = pX + (x3 - pX)/5  # 지터링 방지 및 부드러운 움직임을 위한 보간법 값 나누기
+            cY = pY + (y3 - pY)/5
             
             Controll.flag = True
             autopy.mouse.move(wScr-cX, cY)  # x축 값은 카메라 기준 좌우반전, y축은 반전 필요 x
@@ -181,5 +184,5 @@ while True:     # 영상 처리 시작
 
 
     img = cv2.flip(img, 1)            #인간이 보기 편한 거울 화면으로 출력
-    #cv2.imshow("AIVM", img)         #웹캠 출력
+    # cv2.imshow("AIVM", img)         #웹캠 출력
 

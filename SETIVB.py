@@ -2,9 +2,12 @@ import subprocess
 import tkinter as tk
 import threading
 import os
+from Camera import CameraApp
 
 def infin_process(stop_event):
     while not stop_event.is_set():
+        #subprocess.run('AIVM.exe')
+        #subprocess.run('AIVB.exe')
         subprocess.run(['python', 'AIVM.py'])
         subprocess.run(['python', 'AIVB.py'])
 
@@ -15,10 +18,29 @@ def start_SETIVB():
 
 def stop_program(t, stop_event):
     open("stop.txt", "w").close()
+    subprocess.call(['attrib','+H','stop.txt'])
     stop_event.set()
     t.join()
     os.remove("stop.txt")
+    os.remove("index.txt")
     root.quit()
+
+if os.path.exists("index.txt"):
+    os.remove("index.txt")
+
+if os.path.exists("stop.txt"):
+    os.remove("stop.txt")
+
+if CameraApp.selected_webcam_index is None:
+    app = CameraApp()
+    CameraApp.selected_webcam_index = app.start_webcam()
+
+    with open("index.txt", "w") as f1:
+        f1.write(str(CameraApp.selected_webcam_index))
+    subprocess.call(['attrib','+H','index.txt'])
+
+def do_nothing():
+        pass
 
 stop_event = threading.Event()
 t = start_SETIVB()
@@ -39,5 +61,7 @@ img = tk.Image("photo", file="SETIVB.png")
 root.tk.call('wm', 'iconphoto', root._w, img)
 root.iconphoto(True, img)
 root.title('SETIVB')
+
+root.protocol("WM_DELETE_WINDOW", do_nothing)
 
 root.mainloop()
