@@ -20,7 +20,13 @@ cv2.setNumThreads(2)
 
 initHand = mp.solutions.hands  # Initializing mediapipe
 # Object of mediapipe with "arguments for the hands module" 미디어파이프 내부 핸즈 모듈 
-mainHand = initHand.Hands(max_num_hands=1, min_detection_confidence=0.5, min_tracking_confidence=0.5) # 80% 이상의 정확도일 경우에만 탐지 및 추적
+
+mainHand = initHand.Hands(
+    max_num_hands=1, 
+    min_detection_confidence=0.5, 
+    min_tracking_confidence=0.5
+) # 50% 이상의 정확도일 경우에만 탐지 및 추적
+
 draw = mp.solutions.drawing_utils  # 각 핑거 인덱스 간의 연결을 그릴 개체 (랜드마크 사이 선)
 wScr, hScr = autopy.screen.size()  # 화면의 높이와 너비를 출력 (1920 x 1080)
 scale_factor_x = wScr / 320
@@ -126,8 +132,6 @@ while True:     # 영상 처리 시작
             autopy.mouse.move(wScr-cX, cY)  # x축 값은 카메라 기준 좌우반전, y축은 반전 필요 x
             pX, pY = cX, cY  # pre 값에 current 값 넣어주기
 
-            
-
             if ((y4 - ymid) < 45 and (y4 - ymid) > 20) and ((x4 - xmid) < -45 or (x4 - xmid) > 45):
                 cv2.destroyAllWindows()
                 cap.release()
@@ -171,17 +175,6 @@ while True:     # 영상 처리 시작
             vol = np.interp(length, [hmin, hmax], [minVol, maxVol])
             
             volume.SetMasterVolumeLevel(vol, None)
-        
-        # Exit gesture 1sec maintain
-        #if finger == [0,0,0,0,1]:
-        #    i += 1
-        #    time.sleep(0.05)
-            
-        #if i > 10 :
-        #    cv2.destroyAllWindows()
-        #    cap.release()
-        #    sys.exit(0)
-
 
     img = cv2.flip(img, 1)            #인간이 보기 편한 거울 화면으로 출력
     # cv2.imshow("AIVM", img)         #웹캠 출력

@@ -163,6 +163,12 @@ while True:
 
         finger = fingers(lmList)  # finger에 손가락 접힘 0, 1 구분 배열 전달
 
+        if finger == [1,1,1,1,1]:  # 포인팅 핑거가 위에 있고 엄지손가락이 아래에 있는지 확인
+            if ((y4 - ymid) < 45 and (y4 - ymid) > 20) and ((x4 - xmid) < -45 or (x4 - xmid) > 45):
+                cv2.destroyAllWindows()
+                cap.release()
+                sys.exit(0)
+
         if finger == [1,0,0,0,0]:
             if is_save == False:     
                 file_path = os.path.join(folder_path, file_name)
@@ -193,15 +199,6 @@ while True:
             z = 2
             k = 0
             code = (0,255,0)
-        
-        #if finger == [0,0,0,0,1]:
-        #    j += 1
-        #    time.sleep(0.05)
-            
-        #if j > 10 :
-        #    cap.release()
-        #    cv2.destroyAllWindows()
-        #    sys.exit(0)
             
     if op.multi_hand_landmarks:
         for i in op.multi_hand_landmarks:
@@ -212,11 +209,6 @@ while True:
 
             pyautogui.moveTo(x3, y3)  # x축 값은 카메라 기준 좌우반전, y축은 반전 필요 x
             pX, pY = x3, y3
-
-            if ((y4 - ymid) < 45 and (y4 - ymid) > 20) and ((x4 - xmid) < -45 or (x4 - xmid) > 45):
-                cv2.destroyAllWindows()
-                cap.release()
-                sys.exit(0)
 
             if x < max_x and y < max_y and x > ml:      #선택
                 if time_init:
@@ -316,29 +308,6 @@ while True:
                         imgCanvas = Scrshot.copy()
                         is_erase = True
 
-            #elif curr_tool == "erase":          # 지우개
-            #    is_save = False 
-            #    xi, yi = int(i.landmark[12].x * width), int(i.landmark[12].y * height)
-            #    y9 = int(i.landmark[9].y * height)
-
-            #    if index_raised(yi, y9):
-            #        if not is_erase:
-            #            imgCanvas = Scrshot.copy()
-            #            is_erase = True
-            
-            if finger == [1,0,0,0,0]:
-                if is_save == False:     
-                    file_path = os.path.join(folder_path, file_name)
-                    if os.path.exists(file_path):
-                        file_name = f'{file_name_base}_{file_index}{file_extension}'
-                        file_path = os.path.join(folder_path, file_name)
-                        if not is_index_save:
-                            file_index += 1
-                            is_index_save = True
-                    cv2.imwrite(file_path, imgCanvas)
-                    is_save = True
-
-    
     alpha = 0
     img[:max_y,ml:max_x] = cv2.addWeighted(tools, 0.7, img[:max_y, ml:max_x], 0.3, 0)
     imgCanvas[:max_y,ml:max_x] = cv2.addWeighted(tools, 0.7, img[:max_y, ml:max_x], 0.3, 0)
