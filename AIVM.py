@@ -173,9 +173,19 @@ while True:     # 영상 처리 시작
         if finger == [1,1,0,0,0]:
             length = math.hypot(x1 - x2, y1 - y2)
             vol = np.interp(length, [hmin, hmax], [minVol, maxVol])
-            
-            volume.SetMasterVolumeLevel(vol, None)
 
+            if i >= 15:
+                i = 15
+                volume.SetMasterVolumeLevel(vol, None)
+            else:
+                for i in range(15):
+                    i += 1
+                    time.sleep(0.05)
+                    print(i)
+
+        if finger != [1,1,0,0,0]:
+            i = 0
+           
     img = cv2.flip(img, 1)            #인간이 보기 편한 거울 화면으로 출력
     # cv2.imshow("AIVM", img)         #웹캠 출력
 

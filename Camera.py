@@ -2,22 +2,23 @@ import cv2
 import tkinter as tk
 from tkinter import ttk
 import sys
+from pygrabber.dshow_graph import FilterGraph
 
 class CameraApp:
     selected_webcam_index = None
+    webcam_name = None
+
     def __init__(self):
         self.selected_webcam = None
     
     def get_available_cameras(self):
         # Get list of all available cameras
-        index = 0
+        devices = FilterGraph().get_input_devices()
+        global arr
         arr = []
-        for i in range(10):
-            cap = cv2.VideoCapture(i)
-            if cap.read()[0]:
-                arr.append("Camera " + str(index))
-            cap.release()
-            index += 1
+        for index, device_name in enumerate(devices):
+            arr.append(device_name)
+        
         return arr
 
     def start_webcam(self):
@@ -44,6 +45,12 @@ class CameraApp:
 
         ok_button = tk.Button(root, text="OK", command=select_camera)
         ok_button.pack()
+
+        img = tk.Image("photo", file="SETIVB.png")
+        root.tk.call('wm', 'iconphoto', root._w, img)
+        root.iconphoto(True, img)
+        root.title('SETIVB')
+
         root.wm_protocol("WM_DELETE_WINDOW", on_closing)
 
         root.mainloop()
@@ -51,7 +58,7 @@ class CameraApp:
         if self.selected_webcam is None:
             sys.exit(0)
         else:
-            selected_webcam_index = int(self.selected_webcam.split()[-1])
+            selected_webcam_index = arr.index(self.selected_webcam)
             return selected_webcam_index
 
 def main():
