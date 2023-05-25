@@ -316,7 +316,7 @@ while True:
     cv2.namedWindow('Canvas', cv2.WND_PROP_FULLSCREEN)
     cv2.setWindowProperty('Canvas', cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)
 
-    #cv2.imshow("AIVB", frm)
+    #cv2.imshow("AIVB", img)
     cv2.imshow("Canvas", blended)
 
     if cv2.waitKey(1) == 27:

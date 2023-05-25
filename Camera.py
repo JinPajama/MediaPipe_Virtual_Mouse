@@ -2,7 +2,12 @@ import cv2
 import tkinter as tk
 from tkinter import ttk
 import sys
+import time
+import os
+from PIL import Image, ImageTk
 from pygrabber.dshow_graph import FilterGraph
+
+is_selected = False
 
 class CameraApp:
     selected_webcam_index = None
@@ -10,7 +15,7 @@ class CameraApp:
 
     def __init__(self):
         self.selected_webcam = None
-    
+        self.is_running = True
     def get_available_cameras(self):
         # Get list of all available cameras
         devices = FilterGraph().get_input_devices()
@@ -36,14 +41,57 @@ class CameraApp:
         camera_dropdown.pack(pady=10)
 
         # When user clicks 'OK', set selected camera and close the window
-        def select_camera():
-            self.selected_webcam = camera_selected.get()
-            root.destroy()
-        
         def on_closing():
             root.quit()
 
-        ok_button = tk.Button(root, text="OK", command=select_camera)
+        def show_webcam():
+            cap = cv2.VideoCapture(arr.index(camera_selected.get()))
+
+            window = tk.Toplevel()
+            window.title("이 웹캠이 맞습니까?")
+
+            def select_camera():
+                global is_selected
+                is_selected = True
+                self.selected_webcam = camera_selected.get()
+                window.destroy()
+                root.destroy()
+                
+            def restart():
+                global is_selected
+                is_selected = True
+                cap.release()
+                window.destroy()
+
+            label = tk.Label(window)
+            label.pack()
+            OKbutton = tk.Button(window, text="선택하기", command=select_camera)
+            OKbutton.pack()
+            NObutton = tk.Button(window, text="다시 선택", command=restart)
+            NObutton.pack()
+
+            def update_frame():
+                while is_selected is False:
+                    _, frame = cap.read()
+                    frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+                    image = Image.fromarray(frame)
+                    photo = ImageTk.PhotoImage(image)
+                    label.configure(image=photo)
+                    label.image = photo
+                    window.update()
+            
+            update_frame()
+            window.mainloop()
+            cap.release()
+            
+            if cap.isOpened():
+                print("카메라가 열려 있습니다.")
+            else:
+                print("카메라가 꺼졌습니다.")
+
+
+
+        ok_button = tk.Button(root, text="확인", command=show_webcam)
         ok_button.pack()
 
         img = tk.Image("photo", file="SETIVB.png")

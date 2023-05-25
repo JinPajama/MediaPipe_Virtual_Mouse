@@ -2,6 +2,7 @@ import subprocess
 import tkinter as tk
 import threading
 import os
+import time
 from Camera import CameraApp
 
 def infin_process(stop_event):
@@ -41,7 +42,7 @@ if CameraApp.selected_webcam_index is None:
 
 def do_nothing():
         pass
-
+    
 stop_event = threading.Event()
 t = start_SETIVB()
 

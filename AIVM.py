@@ -185,7 +185,9 @@ while True:     # 영상 처리 시작
 
         if finger != [1,1,0,0,0]:
             i = 0
-           
+
     img = cv2.flip(img, 1)            #인간이 보기 편한 거울 화면으로 출력
-    # cv2.imshow("AIVM", img)         #웹캠 출력
+    cv2.imshow("AIVM", img)         #웹캠 출력
+
+    
 
