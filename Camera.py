@@ -2,8 +2,6 @@ import cv2
 import tkinter as tk
 from tkinter import ttk
 import sys
-import time
-import os
 from PIL import Image, ImageTk
 from pygrabber.dshow_graph import FilterGraph
 
