@@ -133,12 +133,13 @@ while True:     # 영상 처리 시작
             Controll.flag = True
             autopy.mouse.move(wScr-cX, cY)  # x축 값은 카메라 기준 좌우반전, y축은 반전 필요 x
             pX, pY = cX, cY  # pre 값에 current 값 넣어주기
-
+            
+            """
             if ((y4 - ymid) < 45 and (y4 - ymid) > 20) and ((x4 - xmid) < -45 or (x4 - xmid) > 45):
                 cv2.destroyAllWindows()
                 cap.release()
                 sys.exit(0)
-            
+            """
         if finger == [0,1,1,1,1] and Controll.flag:  # Checks to see if the pointer finger is down and thumb finger is up
             autopy.mouse.click()
             Controll.flag = False
@@ -187,7 +188,21 @@ while True:     # 영상 처리 시작
 
         if finger != [1,1,0,0,0]:
             i = 0
-
+        
+        if finger == [0,0,0,0,1]:
+            if j >= 10:
+                j = 10
+                cv2.destroyAllWindows()
+                cap.release()
+                sys.exit(0)
+            else:
+                for j in range(10):
+                    j += 1
+                    time.sleep(0.05)
+                    
+        if finger != [0,0,0,0,1]:
+            j = 0
+            
     img = cv2.flip(img, 1)            #인간이 보기 편한 거울 화면으로 출력
     #cv2.imshow("AIVM", img)         #웹캠 출력
 

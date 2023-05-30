@@ -4,6 +4,7 @@ import subprocess
 import tkinter as tk
 import threading
 import os
+import keyboard
 from Camera import CameraApp
 
 def infin_process(stop_event):
@@ -55,7 +56,7 @@ h = 90
 x = ws - 88 - (w/2)
 y = hs - 100 - (h/2)
 
-button = tk.Button(root, text="종료", command=lambda: stop_program(t, stop_event))
+button = tk.Button(root, text="종료",width = 10, height = 10, command=lambda: stop_program(t, stop_event))
 button.pack()
 
 root.geometry('%dx%d+%d+%d' % (w, h, x, y))

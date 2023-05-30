@@ -139,6 +139,7 @@ def fingers(landmarks):                     # 손가락 접힘을 0과 1로 구�
 j = 0
 k = 0
 z = 2
+a = 0
 
 is_erase = False
 is_save = False
@@ -165,11 +166,25 @@ while True:
 
         finger = fingers(lmList)  # finger에 손가락 접힘 0, 1 구분 배열 전달
 
-        if finger == [1,1,1,1,1]:  # 포인팅 핑거가 위에 있고 엄지손가락이 아래에 있는지 확인
-            if ((y4 - ymid) < 45 and (y4 - ymid) > 20) and ((x4 - xmid) < -45 or (x4 - xmid) > 45):
+        """
+        if ((y4 - ymid) < 45 and (y4 - ymid) > 20) and ((x4 - xmid) < -45 or (x4 - xmid) > 45):
+            cv2.destroyAllWindows()
+            cap.release()
+            sys.exit(0)
+        """
+        if finger == [0,0,0,0,1]:
+            if j >= 10:
+                j = 10
                 cv2.destroyAllWindows()
                 cap.release()
                 sys.exit(0)
+            else:
+                for j in range(10):
+                    j += 1
+                    time.sleep(0.05)
+                    
+        if finger != [0,0,0,0,1]:
+            j = 0
 
         if finger == [1,0,0,0,0]:
             if is_save == False:     
@@ -184,8 +199,18 @@ while True:
         if finger == [1,1,0,0,0]:
             length = math.hypot(x1 - x2, y1 - y2)
             length1 = int(length)
-            thick = int(np.interp(length1, [hmin, hmax], [thick_min, thick_max]))
             thickness = "{}".format(thick)
+            
+            if a >= 15:
+                a = 15
+                thick = int(np.interp(length1, [hmin, hmax], [thick_min, thick_max]))
+            else:
+                for a in range(15):
+                    a += 1
+                    time.sleep(0.05)
+                    
+        if finger != [1,1,0,0,0]:
+            a = 0
         
         if finger == [1,0,0,0,1]:
             z = 0
