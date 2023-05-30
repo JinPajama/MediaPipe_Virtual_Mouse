@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 import mediapipe as mp
 import cv2
 import numpy as np

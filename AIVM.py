@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 import cv2
 import time
 import mediapipe as mp
@@ -181,7 +183,7 @@ while True:     # 영상 처리 시작
                 for i in range(15):
                     i += 1
                     time.sleep(0.05)
-                    print(i)
+                    
 
         if finger != [1,1,0,0,0]:
             i = 0

@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 import cv2
 import tkinter as tk
 from tkinter import ttk
@@ -14,6 +16,7 @@ class CameraApp:
     def __init__(self):
         self.selected_webcam = None
         self.is_running = True
+        
     def get_available_cameras(self):
         # Get list of all available cameras
         devices = FilterGraph().get_input_devices()
@@ -37,12 +40,16 @@ class CameraApp:
         camera_selected.set(camera_list[0])
         camera_dropdown = ttk.Combobox(root, textvariable=camera_selected, values=camera_list)
         camera_dropdown.pack(pady=10)
+        
+        global is_selected
+        is_selected = False
 
         # When user clicks 'OK', set selected camera and close the window
         def on_closing():
             root.quit()
 
         def show_webcam():
+            
             cap = cv2.VideoCapture(arr.index(camera_selected.get()))
 
             window = tk.Toplevel()
@@ -52,6 +59,7 @@ class CameraApp:
                 global is_selected
                 is_selected = True
                 self.selected_webcam = camera_selected.get()
+                cap.release()
                 window.destroy()
                 root.destroy()
                 
@@ -60,6 +68,9 @@ class CameraApp:
                 is_selected = True
                 cap.release()
                 window.destroy()
+                
+            global is_selected
+            is_selected = False
 
             label = tk.Label(window)
             label.pack()
@@ -69,7 +80,6 @@ class CameraApp:
             NObutton.pack()
 
             def update_frame():
-                while is_selected is False:
                     _, frame = cap.read()
                     frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
                     image = Image.fromarray(frame)
@@ -78,16 +88,11 @@ class CameraApp:
                     label.image = photo
                     window.update()
             
-            update_frame()
+            while is_selected is False:
+                update_frame()
+                
             window.mainloop()
             cap.release()
-            
-            if cap.isOpened():
-                print("카메라가 열려 있습니다.")
-            else:
-                print("카메라가 꺼졌습니다.")
-
-
 
         ok_button = tk.Button(root, text="확인", command=show_webcam)
         ok_button.pack()
