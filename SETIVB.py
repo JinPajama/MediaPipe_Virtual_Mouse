@@ -4,7 +4,6 @@ import subprocess
 import tkinter as tk
 import threading
 import os
-import keyboard
 from Camera import CameraApp
 
 def infin_process(stop_event):

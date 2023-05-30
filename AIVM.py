@@ -202,7 +202,7 @@ while True:     # 영상 처리 시작
             else:
                 for j in range(10):
                     j += 1
-                    time.sleep(0.05)
+                    time.sleep(0.15)
                     
         if finger != [0,0,0,0,1]:
             j = 0
