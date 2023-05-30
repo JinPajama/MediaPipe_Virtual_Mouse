@@ -93,7 +93,7 @@ def fingers(landmarks):                     # 손가락 접힘을 0과 1로 구�
     
     # Check if fingers are up except the thumb
     for id in range(1, 5): # 2번째 ~ 5번째 손가락
-        if landmarks[tipIds[id]][2] < landmarks[tipIds[id] - 3][2]:  # Checks to see if the tip of the finger is higher than the joint
+        if landmarks[tipIds[id]][2] < landmarks[tipIds[id] - 2][2]:  # Checks to see if the tip of the finger is higher than the joint
             fingerTips.append(1)
         else:
             fingerTips.append(0)
@@ -142,6 +142,10 @@ while True:     # 영상 처리 시작
             """
         if finger == [0,1,1,1,1] and Controll.flag:  # Checks to see if the pointer finger is down and thumb finger is up
             autopy.mouse.click()
+            Controll.flag = False
+            
+        if finger == [0,0,1,1,1] and Controll.flag:
+            pyautogui.doubleClick()
             Controll.flag = False
         
         if finger == [1,0,1,1,1] and Controll.flag:  # Checks to see if the pointer finger is down and thumb finger is up
